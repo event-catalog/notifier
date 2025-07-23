@@ -1,4 +1,4 @@
-import { Notification, NotifierConfig } from '../types';
+import { Notification, NotifierConfig, Stage } from '../types';
 
 export class Event {
   public changedFiles: string[];
@@ -15,7 +15,7 @@ export class Event {
     return [];
   }
 
-  static getSlackMessage(config: NotifierConfig, notification: Notification): any {
+  static getSlackMessage(config: NotifierConfig, notification: Notification, stage: Stage): any {
     throw new Error('Not implemented');
   }
 }

@@ -30,6 +30,7 @@ program
   .option('--catalog <path>', 'Path to EventCatalog directory', './')
   .option('--commit-range <range>', 'Git commit range for comparison (e.g., HEAD~1..HEAD)')
   .option('--verbose', 'Enable verbose logging for debugging')
+  .option('--lifecycle <lifecycle>', 'Lifecycle stage: draft (e.g. PR) or active (e.g. merged)', 'active')
   .action(async (options) => {
     const logger = new Logger(options.verbose);
 
@@ -91,7 +92,7 @@ program
         logger.warn('DRY RUN MODE - No notifications will be sent');
       }
 
-      await sendNotifications(config, filteredEvents, options.dryRun ?? false);
+      await sendNotifications(config, filteredEvents, options.dryRun ?? false, options.lifecycle);
 
       const mode = options.dryRun ? 'previewed' : 'sent';
       logger.success(`Successfully ${mode} ${filteredEvents.length} notification(s)`);

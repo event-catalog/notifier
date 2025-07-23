@@ -1,12 +1,13 @@
 import axios from 'axios';
 import chalk from 'chalk';
-import { NotifierConfig, Notification } from './types';
+import { NotifierConfig, Notification, Stage } from './types';
 import { ConsumerAddedEvent } from './notifications/ConsumerAddedEvent';
 
 export async function sendNotifications(
   config: NotifierConfig,
   notifications: Notification[],
-  dryRun: boolean = false
+  dryRun: boolean = false,
+  lifecycle: Stage
 ): Promise<void> {
   for (const notification of notifications) {
     for (const ownerName in config.owners) {
@@ -15,7 +16,7 @@ export async function sendNotifications(
       if (owner.events.includes(notification.id)) {
         for (const channel of owner.channels) {
           if (channel.type === 'slack') {
-            await sendSlackNotification(config, notification, channel, dryRun);
+            await sendSlackNotification(config, notification, channel, dryRun, lifecycle);
           }
         }
       }
@@ -27,13 +28,14 @@ async function sendSlackNotification(
   config: NotifierConfig,
   notification: Notification,
   channel: { type: string; webhook: string; headers?: { [key: string]: string } },
-  dryRun: boolean = false
+  dryRun: boolean = false,
+  lifecycle: Stage
 ): Promise<void> {
   let message = null;
 
   switch (notification.id) {
     case 'consumer-added':
-      message = ConsumerAddedEvent.getSlackMessage(config, notification);
+      message = ConsumerAddedEvent.getSlackMessage(config, notification, lifecycle);
       break;
     default:
       message = null;

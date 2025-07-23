@@ -258,12 +258,46 @@ We welcome contributions! Please:
 
 ## 📄 License
 
-MIT © EventCatalog
+EventCatalog Notifier is **source-available software** with a community-friendly licensing model designed to support sustainable development while keeping the code transparent and accessible.
+
+### 🔍 What This Means
+
+- **📖 Transparent Source**: View, study, and modify the code for evaluation purposes
+- **🆓 Try Before You Buy**: 14-day free trial to test in your environment
+- **🔑 Production License Required**: A license key is needed for production use
+- **🚀 Future Open Source**: Plans to become fully open source as the project matures
+
+### 🎯 Getting Started
+
+- **🔥 Start Your Free Trial**: [eventcatalog.cloud](https://eventcatalog.cloud) - No credit card required
+- **💳 Purchase License**: [eventcatalog.dev/pricing](https://eventcatalog.dev/pricing) - Flexible plans for teams of all sizes
+
+### ✨ Why This Model?
+
+This approach helps us:
+
+- **🛡️ Maintain Quality**: Dedicated resources for testing, documentation, and support
+- **⚡ Rapid Development**: Faster feature delivery and bug fixes
+- **🤝 Community Focus**: Fair pricing while keeping source code accessible
+- **📈 Sustainable Growth**: Long-term project viability without compromising on transparency
+
+We believe in **transparency without compromise** - you can see exactly how the tool works, contribute improvements, and trust that your investment supports continued innovation.
+
+### 📋 Usage Rights
+
+- ✅ View and study the source code
+- ✅ Modify for evaluation and testing
+- ✅ Use with valid license key in production
+- ✅ Contribute improvements via pull requests
+- ❌ Remove license validation mechanisms
+- ❌ Offer as a competing service
+
+Questions about licensing? We're here to help! Reach out through our support channels below.
 
 ## 🆘 Support
 
 - 📖 [EventCatalog Documentation](https://eventcatalog.dev)
-- 🐛 [Report Issues](https://github.com/eventcatalog/notifier/issues)
+- 🐛 [Report Issues](https://github.com/event-catalog/notifier/issues)
 - 💬 [Discord Community](https://discord.gg/eventcatalog)
 
 ---
