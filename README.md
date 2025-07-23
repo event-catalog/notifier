@@ -268,4 +268,4 @@ MIT © EventCatalog
 
 ---
 
-Made with ❤️ by the EventCatalog team
+Made with ❤️ by the EventCatalog team.
