@@ -32,7 +32,8 @@ export class ConsumerAddedEvent extends Event {
 
     // Process each service
     for (const service of changedServices) {
-      const [beforeRange, afterRange] = this.commitRange.split('..');
+      // Handle both .. and ... git range syntax
+      const [beforeRange, afterRange] = this.parseCommitRange(this.commitRange);
       const fileBefore = getFileAtCommit(this.catalogPath, service.absolutePath, beforeRange);
       const fileAfter = getFileAtCommit(this.catalogPath, service.absolutePath, afterRange);
 
@@ -141,6 +142,19 @@ export class ConsumerAddedEvent extends Event {
         },
       ],
     };
+  }
+
+  private parseCommitRange(commitRange: string): [string, string] {
+    // Handle both .. (two-dot) and ... (three-dot) git range syntax
+    if (commitRange.includes('...')) {
+      // Three-dot syntax: A...B
+      const parts = commitRange.split('...');
+      return [parts[0], parts[1]];
+    } else {
+      // Two-dot syntax: A..B
+      const parts = commitRange.split('..');
+      return [parts[0], parts[1]];
+    }
   }
 
   private findNewReceives(beforeReceives: { id: string }[], afterReceives: { id: string }[]): { id: string }[] {

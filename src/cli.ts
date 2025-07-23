@@ -26,7 +26,7 @@ program
   .command('detect')
   .description('Detect changes in the catalog and send notifications')
   .option('--dry-run', 'Preview changes without sending notifications')
-  .option('--config <path>', 'Path to configuration file', './eventcatalog-notifier.yml')
+  .option('--config <path>', 'Path to configuration file', './eventcatalog.notifier.yml')
   .option('--catalog <path>', 'Path to EventCatalog directory', './')
   .option('--commit-range <range>', 'Git commit range for comparison (e.g., HEAD~1..HEAD)')
   .option('--verbose', 'Enable verbose logging for debugging')
@@ -51,10 +51,9 @@ program
         logger.warn("Make sure you're pointing to a valid EventCatalog directory");
         process.exit(1);
       }
-
       logger.verbose('Loading notifier configuration...');
       const config = loadConfig(path.join(catalogPath, options.config));
-      logger.verbose(`Configuration loaded: ${Object.keys(config.owners).length} teams configured`);
+      logger.verbose(`Configuration loaded`);
 
       const commitRange = options.commitRange || 'HEAD~1..HEAD';
       logger.info(`Analyzing changes in commit range: ${chalk.cyan(commitRange)}`);
