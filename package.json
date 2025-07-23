@@ -35,6 +35,9 @@
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
     "@types/js-yaml": "^4.0.9",
