@@ -28,7 +28,6 @@
   "author": "EventCatalog",
   "license": "MIT",
   "dependencies": {
-    "@changesets/cli": "^2.29.5",
     "@eventcatalog/sdk": "^2.6.7",
     "axios": "^1.6.2",
     "chalk": "^5.4.1",
@@ -37,6 +36,7 @@
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.5",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
