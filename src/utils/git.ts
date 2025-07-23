@@ -73,16 +73,6 @@ export function getFileAtCommit(catalogPath: string, filePath: string, commit: s
     // Get path relative to git root (not catalog path)
     const relativeToGitRoot = path.relative(gitRoot, filePath);
 
-    console.log('relativeToGitRoot', relativeToGitRoot);
-
-    console.log(`git show ${commit}:${relativeToGitRoot}`);
-
-    const result = execSync(`git show ${commit}:${relativeToGitRoot}`, {
-      encoding: 'utf-8',
-      cwd: gitRoot,
-    });
-    console.log('result', result);
-
     return execSync(`git show ${commit}:${relativeToGitRoot}`, {
       encoding: 'utf-8',
       cwd: gitRoot,
