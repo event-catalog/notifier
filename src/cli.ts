@@ -99,27 +99,15 @@ program
     } catch (error) {
       if (error instanceof GitError) {
         // Handle Git errors with user-friendly messages
-        logger.error(error.title);
-        console.log();
-        console.log(chalk.gray(error.message));
-
-        if (error.suggestions.length > 0) {
-          console.log();
-          error.suggestions.forEach((suggestion) => {
-            console.log(chalk.gray(suggestion));
-          });
-        }
-
+        logger.errorWithDetails(error.title, error.message, error.suggestions);
         process.exit(1);
       } else {
         // Handle other errors
         logger.error('An unexpected error occurred');
         logger.verbose(`Error details: ${error}`);
 
-        if (options.verbose && error instanceof Error) {
-          console.log();
-          console.log(chalk.red('Stack trace:'));
-          console.log(chalk.gray(error.stack));
+        if (error instanceof Error) {
+          logger.stackTrace(error);
         }
 
         process.exit(1);
