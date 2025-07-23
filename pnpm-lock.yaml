@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@changesets/cli':
+        specifier: ^2.29.5
+        version: 2.29.5
       '@eventcatalog/sdk':
         specifier: ^2.6.7
         version: 2.6.7

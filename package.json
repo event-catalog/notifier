@@ -28,6 +28,7 @@
   "author": "EventCatalog",
   "license": "MIT",
   "dependencies": {
+    "@changesets/cli": "^2.29.5",
     "@eventcatalog/sdk": "^2.6.7",
     "axios": "^1.6.2",
     "chalk": "^5.4.1",
