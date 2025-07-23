@@ -1,5 +1,11 @@
 # @eventcatalog/notifier
 
+## 0.0.3
+
+### Patch Changes
+
+- 8293e63: feat(cli): config can now pass in environment variables
+
 ## 0.0.2
 
 ### Patch Changes
