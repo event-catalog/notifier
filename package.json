@@ -1,0 +1,49 @@
+{
+  "name": "@eventcatalog/notifier",
+  "version": "0.0.1",
+  "description": "CLI tool to detect EventCatalog changes and send notifications",
+  "main": "dist/cli.js",
+  "bin": {
+    "eventcatalog-notifier": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "ts-node src/cli.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "start": "node dist/cli.js",
+    "format": "prettier --write .",
+    "format:diff": "prettier --list-different .",
+    "prepublishOnly": "npm run build",
+    "changeset": "changeset",
+    "release": "changeset publish"
+  },
+  "keywords": [
+    "eventcatalog",
+    "notifications",
+    "slack",
+    "cli"
+  ],
+  "author": "EventCatalog",
+  "license": "MIT",
+  "dependencies": {
+    "@eventcatalog/sdk": "^2.6.7",
+    "axios": "^1.6.2",
+    "chalk": "^5.4.1",
+    "commander": "^11.1.0",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2",
+    "vitest": "^3.2.4"
+  }
+}

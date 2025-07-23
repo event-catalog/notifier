@@ -1,0 +1,31 @@
+version: 1.0.0
+
+teams:
+  # Team 1: Payments team - only wants notifications for specific events
+  payments-team:
+    events:
+      - consumer-added
+    channels:
+      - type: slack
+        webhook: ${SLACK_WEBHOOK_PAYMENTS}
+
+  # Team 2: User team - wants all available notifications
+  user-team:
+    events:
+      - consumer-added
+      - consumer-removed
+    channels:
+      - type: slack
+        webhook: ${SLACK_WEBHOOK_USERS}
+      - type: email
+        to: user-team@company.com
+
+  # Team 3: Inventory team - only consumer notifications
+  inventory-team:
+    events:
+      - consumer-added
+    channels:
+      - type: webhook
+        url: https://internal-api.company.com/notifications
+        headers:
+          Authorization: Bearer ${INTERNAL_API_TOKEN}
