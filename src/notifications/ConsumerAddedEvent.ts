@@ -1,5 +1,5 @@
 import { Event } from './Event';
-import { Notification, NotifierConfig } from '../types';
+import { Notification, NotifierConfig, Stage } from '../types';
 import utils from '@eventcatalog/sdk';
 import { getFileAtCommit } from '../utils/git';
 
@@ -78,7 +78,7 @@ export class ConsumerAddedEvent extends Event {
     return notifications;
   }
 
-  static getSlackMessage(config: NotifierConfig, notification: Notification): any {
+  static getSlackMessage(config: NotifierConfig, notification: Notification, lifecycle: Stage): any {
     const eventOwners = notification.resource.owners
       .map((owner) => {
         const id = owner.id || owner;
@@ -99,12 +99,19 @@ export class ConsumerAddedEvent extends Event {
       minute: '2-digit',
     });
 
+    const isDraft = lifecycle === 'draft';
+    const text = isDraft ? `🔄 EventCatalog - ✉️ Request to Add Event Consumer` : `🆕 EventCatalog - ✉️ New Event Consumer Added`;
+
+    const pretext = isDraft
+      ? `A request has been made to consume an event in your architecture`
+      : `A new service has started consuming an event in your architecture`;
+
     return {
-      text: `🆕 EventCatalog - ✉️ New Event Consumer Added`,
+      text,
       attachments: [
         {
           color: 'good',
-          pretext: `A new service has started consuming an event in your architecture`,
+          pretext,
           fields: [
             {
               title: '📡 Event Being Consumed',

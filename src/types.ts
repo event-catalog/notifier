@@ -71,3 +71,5 @@ export interface NotifierConfig {
     };
   };
 }
+
+export type Stage = 'draft' | 'active';

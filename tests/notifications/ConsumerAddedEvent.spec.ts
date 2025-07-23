@@ -74,4 +74,63 @@ describe('ConsumerAddedEvent', () => {
     const result = await event.process();
     expect(result).toEqual([]);
   });
+
+  describe('getSlackMessage', () => {
+    const mockConfig = {
+      version: '1.0.0',
+      eventcatalog_url: 'https://example.eventcatalog.dev',
+      owners: {},
+    };
+
+    const mockNotification = {
+      id: 'consumer-added',
+      resource: {
+        id: 'TestEvent',
+        name: 'Test Event',
+        version: '1.0.0',
+        type: 'event' as const,
+        owners: [{ id: 'team1', name: 'Team 1' }],
+      },
+      consumer: {
+        id: 'TestService',
+        name: 'Test Service',
+        version: '1.0.0',
+        type: 'service',
+        owners: [{ id: 'team2', name: 'Team 2' }],
+      },
+      metadata: {
+        timestamp: '2023-01-01T00:00:00.000Z',
+        catalog_path: '/test/catalog',
+      },
+    };
+
+    it('should return active stage message when stage is active', () => {
+      const result = ConsumerAddedEvent.getSlackMessage(mockConfig, mockNotification, 'active');
+
+      expect(result.text).toBe('🆕 EventCatalog - ✉️ New Event Consumer Added');
+      expect(result.attachments[0].pretext).toBe('A new service has started consuming an event in your architecture');
+    });
+
+    it('should return draft stage message when stage is draft', () => {
+      const result = ConsumerAddedEvent.getSlackMessage(mockConfig, mockNotification, 'draft');
+
+      expect(result.text).toBe('🔄 EventCatalog - ✉️ Request to Add Event Consumer');
+      expect(result.attachments[0].pretext).toBe('A request has been made to consume an event in your architecture');
+    });
+
+    it('should contain all required fields for both stages', () => {
+      const activeResult = ConsumerAddedEvent.getSlackMessage(mockConfig, mockNotification, 'active');
+      const draftResult = ConsumerAddedEvent.getSlackMessage(mockConfig, mockNotification, 'draft');
+
+      [activeResult, draftResult].forEach((result) => {
+        expect(result.attachments[0].fields).toHaveLength(6);
+        expect(result.attachments[0].fields.find((f) => f.title === '📡 Event Being Consumed')).toBeDefined();
+        expect(result.attachments[0].fields.find((f) => f.title === '⚙️ New Consumer Service')).toBeDefined();
+        expect(result.attachments[0].fields.find((f) => f.title === '👥 Event Owners (Need to Know)')).toBeDefined();
+        expect(result.attachments[0].fields.find((f) => f.title === '👥 Consumer Team')).toBeDefined();
+        expect(result.attachments[0].fields.find((f) => f.title === '📅 When')).toBeDefined();
+        expect(result.attachments[0].fields.find((f) => f.title === '💼 Impact')).toBeDefined();
+      });
+    });
+  });
 });
