@@ -1,6 +1,6 @@
 {
   "name": "@eventcatalog/notifier",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "CLI tool to detect EventCatalog changes and send notifications",
   "main": "dist/cli.js",
   "bin": {
