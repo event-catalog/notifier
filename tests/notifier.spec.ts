@@ -52,7 +52,7 @@ describe('Notifier', () => {
         version: 1.0.0
         eventcatalog_url: https://eventcatalog.example.com
         owners:
-          payments-team:
+          dboyne:
             events:
               - consumer-added
             channels:
@@ -85,6 +85,58 @@ describe('Notifier', () => {
       })
     );
     // Notification sent successfully - no need to test console output
+  });
+
+  it('only sends notifications to owners that have configured events and the resource is owned by the owner', async () => {
+    const notifications = [
+      {
+        id: 'consumer-added',
+        resource: {
+          id: 'PaymentComplete',
+          name: 'Payment Complete',
+          version: '0.0.2',
+          type: 'event',
+          owners: [
+            {
+              id: 'other-team', // Resource is owned by different team
+            },
+          ],
+        },
+        consumer: {
+          id: 'PaymentService',
+          name: 'Payment Service',
+          version: '0.0.1',
+          type: 'service',
+          owners: [
+            {
+              id: 'dboyne',
+            },
+          ],
+        },
+        metadata: {
+          timestamp: '2025-07-23T09:49:01.605Z',
+          catalog_path: '/Users/dboyne/dev/eventcatalog/eventcatalog-notifier/catalog-example',
+        },
+      },
+    ] as Notification[];
+
+    const CONFIGURATION = `
+        version: 1.0.0
+        eventcatalog_url: https://eventcatalog.example.com
+        owners:
+          payments-team:
+            events:
+              - consumer-added
+            channels:
+              - type: slack
+                webhook: https://fake-slack-webhook.com
+        `;
+
+    const config = yaml.load(CONFIGURATION) as NotifierConfig;
+    await sendNotifications(config, notifications, false);
+
+    // Should not send notification because payments-team doesn't own the resource
+    expect(mockedAxiosPost).not.toHaveBeenCalled();
   });
 
   it('logs notifications in dry run mode without sending', async () => {
@@ -282,7 +334,7 @@ describe('Notifier', () => {
         version: 1.0.0
         eventcatalog_url: https://eventcatalog.example.com
         owners:
-          payments-team:
+          dboyne:
             events:
               - consumer-added
             channels:
@@ -333,7 +385,7 @@ describe('Notifier', () => {
         version: 1.0.0
         eventcatalog_url: https://eventcatalog.example.com
         owners:
-          payments-team:
+          dboyne:
             events:
               - consumer-added
             channels:
