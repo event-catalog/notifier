@@ -2,6 +2,9 @@ import axios from 'axios';
 import chalk from 'chalk';
 import { NotifierConfig, Notification, Stage } from './types';
 import { ConsumerAddedEvent } from './notifications/ConsumerAddedEvent';
+import { Logger } from './utils/logger';
+
+const logger = new Logger();
 
 export async function sendNotifications(
   config: NotifierConfig,
@@ -20,6 +23,8 @@ export async function sendNotifications(
       ) {
         for (const channel of owner.channels) {
           if (channel.type === 'slack') {
+            logger.info(`Sending slack notification to ${channel.webhook}`);
+            logger.verbose(`Notification: ${JSON.stringify(notification, null, 2)}`);
             await sendSlackNotification(config, notification, channel, dryRun, lifecycle);
           }
         }

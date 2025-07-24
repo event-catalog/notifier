@@ -58,10 +58,18 @@ describe('Notifier', () => {
             channels:
               - type: slack
                 webhook: https://fake-slack-webhook.com
+          payments-team:
+            events:
+              - consumer-added
+            channels:
+              - type: slack
+                webhook: https://fake-slack-webhook.com
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, false);
+    await sendNotifications(config, notifications, false, 'active');
+
+    expect(mockedAxiosPost).toHaveBeenCalledTimes(1);
 
     expect(mockedAxiosPost).toHaveBeenCalledWith(
       'https://fake-slack-webhook.com',
@@ -133,7 +141,7 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, false);
+    await sendNotifications(config, notifications, false, 'draft');
 
     // Should not send notification because payments-team doesn't own the resource
     expect(mockedAxiosPost).not.toHaveBeenCalled();
