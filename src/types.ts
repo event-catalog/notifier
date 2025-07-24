@@ -1,3 +1,13 @@
+export interface CLIOptions {
+  dryRun: boolean;
+  lifecycle: Stage;
+  actionUrl: string;
+  config: string;
+  catalog: string;
+  commitRange: string;
+  verbose: boolean;
+}
+
 export interface EventConsumer {
   id: string;
   version: string;
@@ -34,8 +44,15 @@ export interface SlackNotification {
   changeType: 'added' | 'removed';
 }
 
+export interface SubscribedSchemaChanged extends Notification {
+  before: string;
+  after: string;
+  diff: string;
+}
+
 export interface Notification {
   id: string;
+  version: string;
   resource: {
     id: string;
     name: string;

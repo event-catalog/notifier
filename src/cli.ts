@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
+import { CLIOptions } from './types';
 
 import { getChangedFiles, GitError } from './utils/git';
 import { loadConfig } from './config';
@@ -11,6 +12,7 @@ import { Logger } from './utils/logger';
 // Events
 import { ConsumerAddedEvent } from './notifications/ConsumerAddedEvent';
 import { ConsumerRemovedEvent } from './notifications/ConsumerRemovedEvent';
+import { SubscribedSchemaChangedEvent } from './notifications/SubscribedSchemaChangedEvent';
 
 import { filterNotifications } from './filter';
 import { processEvents } from './processor';
@@ -32,7 +34,8 @@ program
   .option('--commit-range <range>', 'Git commit range for comparison (e.g., HEAD~1..HEAD)')
   .option('--verbose', 'Enable verbose logging for debugging')
   .option('--lifecycle <lifecycle>', 'Lifecycle stage: draft (e.g. PR) or active (e.g. merged)', 'active')
-  .action(async (options) => {
+  .option('--action-url <url>', 'Optional URL used for notification actions')
+  .action(async (options: CLIOptions) => {
     const logger = new Logger(options.verbose);
 
     try {
@@ -53,8 +56,9 @@ program
         logger.warn("Make sure you're pointing to a valid EventCatalog directory");
         process.exit(1);
       }
+
       logger.verbose('Loading notifier configuration...');
-      const config = loadConfig(path.join(catalogPath, options.config));
+      const projectNotifierConfig = loadConfig(path.join(catalogPath, options.config));
       logger.verbose(`Configuration loaded`);
 
       const commitRange = options.commitRange || 'HEAD~1..HEAD';
@@ -72,19 +76,25 @@ program
       }
 
       logger.info(`Processing ${changedFiles.length} changed file(s)...`);
-      const events = await processEvents([
-        // Process each event type
-        new ConsumerAddedEvent({ catalogPath, changedFiles, commitRange }),
-        new ConsumerRemovedEvent({ catalogPath, changedFiles, commitRange }),
-      ]);
+      logger.verbose(`Changed files: ${JSON.stringify(changedFiles, null, 2)}`);
 
-      logger.verbose(`Generated ${events.length} raw notifications`);
+      // Add new events here, if you want to process them
+      const configuredEvents = [
+        new ConsumerAddedEvent({ catalogPath, changedFiles, commitRange, options }),
+        new ConsumerRemovedEvent({ catalogPath, changedFiles, commitRange, options }),
+        new SubscribedSchemaChangedEvent({ catalogPath, changedFiles, commitRange, options }),
+      ];
+
+      // Here we process ALL notifications we can
+      const notifications = await processEvents(configuredEvents);
+
+      logger.verbose(`Generated ${notifications.length} raw notifications`);
 
       // Log the notifications
-      logger.verbose(`Notifications: ${JSON.stringify(events, null, 2)}`);
+      logger.verbose(`Notifications: ${JSON.stringify(notifications, null, 2)}`);
 
-      // Use the config to filter out the events, the user is interested in
-      const filteredEvents = filterNotifications(config, events);
+      // Filter out the notifications only send ones that the user is interested in
+      const filteredEvents = filterNotifications(projectNotifierConfig, notifications);
       logger.info(`Found ${filteredEvents.length} notification(s) to send after filtering`);
 
       // Log the filtered events
@@ -100,7 +110,11 @@ program
         logger.warn('DRY RUN MODE - No notifications will be sent');
       }
 
-      await sendNotifications(config, filteredEvents, options.dryRun ?? false, options.lifecycle);
+      await sendNotifications(projectNotifierConfig, filteredEvents, {
+        dryRun: options.dryRun ?? false,
+        lifecycle: options.lifecycle,
+        actionUrl: options.actionUrl,
+      });
 
       const mode = options.dryRun ? 'previewed' : 'sent';
       logger.success(`Successfully ${mode} ${filteredEvents.length} notification(s)`);

@@ -28,10 +28,11 @@
   "author": "EventCatalog",
   "license": "MIT",
   "dependencies": {
-    "@eventcatalog/sdk": "^2.6.7",
+    "@eventcatalog/sdk": "^2.6.8",
     "axios": "^1.6.2",
     "chalk": "^5.4.1",
     "commander": "^11.1.0",
+    "diff": "^8.0.2",
     "dotenv": "^17.2.0",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0"

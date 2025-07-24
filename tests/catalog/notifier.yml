@@ -5,6 +5,8 @@ teams:
   payments-team:
     events:
       - consumer-added
+      # payments-team get's notified when a schema changes to an event they are subscribed to
+      - subscribed-schema-changed
     channels:
       - type: slack
         webhook: ${SLACK_WEBHOOK_PAYMENTS}
@@ -13,7 +15,6 @@ teams:
   user-team:
     events:
       - consumer-added
-      - consumer-removed
     channels:
       - type: slack
         webhook: ${SLACK_WEBHOOK_USERS}

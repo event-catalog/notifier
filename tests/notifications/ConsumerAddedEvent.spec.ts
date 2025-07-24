@@ -29,12 +29,25 @@ describe('ConsumerAddedEvent', () => {
 
     const changedFiles = ['tests/catalog/services/PaymentGatewayService/index.mdx'];
 
-    const event = new ConsumerAddedEvent({ catalogPath: 'tests/catalog', changedFiles });
+    const event = new ConsumerAddedEvent({
+      catalogPath: 'tests/catalog',
+      changedFiles,
+      options: {
+        dryRun: false,
+        lifecycle: 'active',
+        actionUrl: 'https://example.com',
+        config: 'notifier.yml',
+        catalog: 'tests/catalog',
+        commitRange: 'HEAD~1..HEAD',
+        verbose: false,
+      },
+    });
     const result = await event.process();
 
     expect(result).toEqual([
       {
         id: 'consumer-added',
+        version: '1.0.0',
         resource: {
           id: 'GetInventoryList',
           name: 'List inventory list',
@@ -70,7 +83,19 @@ describe('ConsumerAddedEvent', () => {
 
   it('when no consumers have been added, to a service, it should return an empty array', async () => {
     const changedFiles = ['tests/catalog/services/RandomServiceThatDoesntExist/index.mdx'];
-    const event = new ConsumerAddedEvent({ catalogPath: 'tests/catalog', changedFiles });
+    const event = new ConsumerAddedEvent({
+      catalogPath: 'tests/catalog',
+      changedFiles,
+      options: {
+        dryRun: false,
+        lifecycle: 'active',
+        actionUrl: 'https://example.com',
+        config: 'notifier.yml',
+        catalog: 'tests/catalog',
+        commitRange: 'HEAD~1..HEAD',
+        verbose: false,
+      },
+    });
     const result = await event.process();
     expect(result).toEqual([]);
   });
@@ -84,6 +109,7 @@ describe('ConsumerAddedEvent', () => {
 
     const mockNotification = {
       id: 'consumer-added',
+      version: '1.0.0',
       resource: {
         id: 'TestEvent',
         name: 'Test Event',
