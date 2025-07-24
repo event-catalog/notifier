@@ -1,5 +1,11 @@
 # @eventcatalog/notifier
 
+## 0.0.6
+
+### Patch Changes
+
+- 35a80e3: chore(cli): added more verbose logging
+
 ## 0.0.5
 
 ### Patch Changes
