@@ -46,6 +46,7 @@ owners:
     events:
       - consumer-added # Get notified when services consume payment events
       - consumer-removed # Get notified when services stop consuming payment events
+      - subscribed-schema-changed # Get notified when schemas change for consumed events
     channels:
       - type: slack
         webhook: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
@@ -56,6 +57,7 @@ owners:
     events:
       - consumer-added
       - consumer-removed
+      - subscribed-schema-changed
     channels:
       - type: slack
         webhook: https://hooks.slack.com/services/T00000000/B00000001/YYYYYYYYYYYYYYYYYYYYYYYY
@@ -77,10 +79,11 @@ owners:
 
 The notifier currently supports the following event types:
 
-| Event ID           | Description                | When It Triggers                                                       |
-| ------------------ | -------------------------- | ---------------------------------------------------------------------- |
-| `consumer-added`   | **New Event Consumer**     | When a service starts consuming an event (adds to `receives` list)     |
-| `consumer-removed` | **Event Consumer Removed** | When a service stops consuming an event (removes from `receives` list) |
+| Event ID                    | Description                   | When It Triggers                                                       |
+| --------------------------- | ----------------------------- | ---------------------------------------------------------------------- |
+| `consumer-added`            | **New Event Consumer**        | When a service starts consuming an event (adds to `receives` list)     |
+| `consumer-removed`          | **Event Consumer Removed**    | When a service stops consuming an event (removes from `receives` list) |
+| `subscribed-schema-changed` | **Subscribed Schema Changed** | When a schema changes for an event that services are consuming         |
 
 ### Event Details
 
@@ -98,7 +101,15 @@ The notifier currently supports the following event types:
 - **Use case**: Keep event owners informed when services stop depending on their events (potential breaking changes)
 - **Slack message**: Warning-style message with EventCatalog links and removal indicators
 
-_More event types coming soon! We're working on support for schema changes, ownership changes, deprecations, and more._
+#### `subscribed-schema-changed`
+
+- **Triggers when**: A producer modifies the schema of an event that other services are consuming
+- **Notification includes**: Event details, schema diff (before/after), affected consumers, event owners, producer service information
+- **Use case**: Alert teams when schemas change for events they depend on, helping prevent integration issues
+- **Slack message**: Warning-style message with schema diff, EventCatalog links, and affected consumer information
+- **Schema support**: Detects changes in `.json`, `.avro`, and `.proto` schema files
+
+_More event types coming soon! We're working on support for ownership changes, deprecations, and more._
 
 ## 🔧 How It Works
 

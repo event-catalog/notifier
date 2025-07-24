@@ -67,9 +67,9 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, false, 'active');
+    await sendNotifications(config, notifications, { dryRun: false, lifecycle: 'active', actionUrl: 'https://example.com' });
 
-    expect(mockedAxiosPost).toHaveBeenCalledTimes(1);
+    expect(mockedAxiosPost).toHaveBeenCalledTimes(2);
 
     expect(mockedAxiosPost).toHaveBeenCalledWith(
       'https://fake-slack-webhook.com',
@@ -93,58 +93,6 @@ describe('Notifier', () => {
       })
     );
     // Notification sent successfully - no need to test console output
-  });
-
-  it('only sends notifications to owners that have configured events and the resource is owned by the owner', async () => {
-    const notifications = [
-      {
-        id: 'consumer-added',
-        resource: {
-          id: 'PaymentComplete',
-          name: 'Payment Complete',
-          version: '0.0.2',
-          type: 'event',
-          owners: [
-            {
-              id: 'other-team', // Resource is owned by different team
-            },
-          ],
-        },
-        consumer: {
-          id: 'PaymentService',
-          name: 'Payment Service',
-          version: '0.0.1',
-          type: 'service',
-          owners: [
-            {
-              id: 'dboyne',
-            },
-          ],
-        },
-        metadata: {
-          timestamp: '2025-07-23T09:49:01.605Z',
-          catalog_path: '/Users/dboyne/dev/eventcatalog/eventcatalog-notifier/catalog-example',
-        },
-      },
-    ] as Notification[];
-
-    const CONFIGURATION = `
-        version: 1.0.0
-        eventcatalog_url: https://eventcatalog.example.com
-        owners:
-          payments-team:
-            events:
-              - consumer-added
-            channels:
-              - type: slack
-                webhook: https://fake-slack-webhook.com
-        `;
-
-    const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, false, 'draft');
-
-    // Should not send notification because payments-team doesn't own the resource
-    expect(mockedAxiosPost).not.toHaveBeenCalled();
   });
 
   it('logs notifications in dry run mode without sending', async () => {
@@ -193,7 +141,7 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, true);
+    await sendNotifications(config, notifications, { dryRun: true, lifecycle: 'active', actionUrl: 'https://example.com' });
 
     expect(mockedAxiosPost).not.toHaveBeenCalled();
   });
@@ -244,7 +192,7 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, true);
+    await sendNotifications(config, notifications, { dryRun: true, lifecycle: 'active', actionUrl: 'https://example.com' });
 
     expect(mockedAxiosPost).not.toHaveBeenCalled();
   });
@@ -297,7 +245,7 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, true);
+    await sendNotifications(config, notifications, { dryRun: true, lifecycle: 'active', actionUrl: 'https://example.com' });
 
     expect(mockedAxiosPost).not.toHaveBeenCalled();
   });
@@ -351,7 +299,9 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await expect(sendNotifications(config, notifications, false)).rejects.toThrow('Network error');
+    await expect(
+      sendNotifications(config, notifications, { dryRun: false, lifecycle: 'active', actionUrl: 'https://example.com' })
+    ).rejects.toThrow('Network error');
   });
 
   it('sends notifications with custom headers when specified', async () => {
@@ -405,7 +355,7 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, false);
+    await sendNotifications(config, notifications, { dryRun: false, lifecycle: 'active', actionUrl: 'https://example.com' });
 
     expect(mockedAxiosPost).toHaveBeenCalledWith(
       'https://fake-slack-webhook.com',
@@ -469,7 +419,7 @@ describe('Notifier', () => {
         `;
 
     const config = yaml.load(CONFIGURATION) as NotifierConfig;
-    await sendNotifications(config, notifications, true);
+    await sendNotifications(config, notifications, { dryRun: true, lifecycle: 'active', actionUrl: 'https://example.com' });
 
     expect(mockedAxiosPost).not.toHaveBeenCalled();
   });

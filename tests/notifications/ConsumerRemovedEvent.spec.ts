@@ -29,12 +29,22 @@ describe('ConsumerRemovedEvent', () => {
 
     const changedFiles = ['tests/catalog/services/PaymentGatewayService/index.mdx'];
 
-    const event = new ConsumerRemovedEvent({ catalogPath: 'tests/catalog', changedFiles });
+    const configMock = {
+      version: '1.0.0',
+      eventcatalog_url: 'https://example.eventcatalog.dev',
+      owners: {},
+    };
+    const event = new ConsumerRemovedEvent({
+      catalogPath: 'tests/catalog',
+      changedFiles,
+      options: { dryRun: false, lifecycle: 'active', actionUrl: 'https://example.com' },
+    });
     const result = await event.process();
 
     expect(result).toEqual([
       {
         id: 'consumer-removed',
+        version: '1.0.0',
         resource: {
           id: 'GetInventoryList',
           name: 'List inventory list',
@@ -70,7 +80,11 @@ describe('ConsumerRemovedEvent', () => {
 
   it('when no consumers have been removed from a service, it should return an empty array', async () => {
     const changedFiles = ['tests/catalog/services/RandomServiceThatDoesntExist/index.mdx'];
-    const event = new ConsumerRemovedEvent({ catalogPath: 'tests/catalog', changedFiles });
+    const event = new ConsumerRemovedEvent({
+      catalogPath: 'tests/catalog',
+      changedFiles,
+      options: { dryRun: false, lifecycle: 'active', actionUrl: 'https://example.com' },
+    });
     const result = await event.process();
     expect(result).toEqual([]);
   });
@@ -84,6 +98,7 @@ describe('ConsumerRemovedEvent', () => {
 
     const mockNotification = {
       id: 'consumer-removed',
+      version: '1.0.0',
       resource: {
         id: 'TestEvent',
         name: 'Test Event',

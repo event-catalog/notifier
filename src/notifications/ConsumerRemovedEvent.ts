@@ -1,13 +1,23 @@
 import { Event } from './Event';
-import { Notification, NotifierConfig, Stage } from '../types';
+import { Notification, NotifierConfig, Stage, CLIOptions } from '../types';
 import utils from '@eventcatalog/sdk';
 import { getFileAtCommit } from '../utils/git';
 
 export class ConsumerRemovedEvent extends Event {
   public eventId: string = 'consumer-removed';
 
-  constructor({ catalogPath, changedFiles, commitRange }: { catalogPath: string; changedFiles: string[]; commitRange?: string }) {
-    super({ catalogPath, changedFiles, commitRange });
+  constructor({
+    catalogPath,
+    changedFiles,
+    commitRange,
+    options,
+  }: {
+    catalogPath: string;
+    changedFiles: string[];
+    commitRange?: string;
+    options: CLIOptions;
+  }) {
+    super({ catalogPath, changedFiles, commitRange, options });
   }
 
   async process(): Promise<Notification[]> {
@@ -51,6 +61,7 @@ export class ConsumerRemovedEvent extends Event {
           const ownersForConsumer = await getOwnersForResource(serviceAfter.id);
           notifications.push({
             id: this.eventId,
+            version: '1.0.0',
             resource: {
               id: resource.id,
               name: resource.name,
@@ -78,7 +89,7 @@ export class ConsumerRemovedEvent extends Event {
     return notifications;
   }
 
-  static getSlackMessage(config: NotifierConfig, notification: Notification, lifecycle: Stage): any {
+  static getSlackMessage(config: NotifierConfig, notification: Notification, lifecycle: Stage, actionUrl?: string): any {
     const eventOwners = notification.resource.owners
       .map((owner) => {
         const id = owner.id || owner;

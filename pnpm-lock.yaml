@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@eventcatalog/sdk':
-        specifier: ^2.6.7
-        version: 2.6.7
+        specifier: ^2.6.8
+        version: 2.6.8
       axios:
         specifier: ^1.6.2
         version: 1.10.0
@@ -20,6 +20,9 @@ importers:
       commander:
         specifier: ^11.1.0
         version: 11.1.0
+      diff:
+        specifier: ^8.0.2
+        version: 8.0.2
       dotenv:
         specifier: ^17.2.0
         version: 17.2.0
@@ -300,8 +303,8 @@ packages:
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@eventcatalog/sdk@2.6.7':
-    resolution: {integrity: sha512-12dqVHuofeVPrhMztnUbGprS6Sn983HH/l03vHOMnACcPB0ajWTFaDzWoo0kLw/nhBYXGvQbGCCyf+nC2Mwvwg==}
+  '@eventcatalog/sdk@2.6.8':
+    resolution: {integrity: sha512-IjHzFgWfcJYOR8zHs1GDuSigC0mwhVI4OI8PsImOLKhx9OfRBSphg7tkU2CajjsE/wsHuWpS2mSmU6v387Qsdw==}
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -745,6 +748,10 @@ packages:
 
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
+    engines: {node: '>=0.3.1'}
+
+  diff@8.0.2:
+    resolution: {integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==}
     engines: {node: '>=0.3.1'}
 
   dir-glob@3.0.1:
@@ -1890,7 +1897,7 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@eventcatalog/sdk@2.6.7':
+  '@eventcatalog/sdk@2.6.8':
     dependencies:
       '@changesets/cli': 2.29.5
       fs-extra: 11.3.0
@@ -2317,6 +2324,8 @@ snapshots:
   detect-indent@6.1.0: {}
 
   diff@4.0.2: {}
+
+  diff@8.0.2: {}
 
   dir-glob@3.0.1:
     dependencies:

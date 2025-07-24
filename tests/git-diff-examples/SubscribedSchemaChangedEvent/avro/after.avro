@@ -1,0 +1,13 @@
+{
+  "type": "record",
+  "namespace": "inventory.events",
+  "name": "InventoryItemAdded",
+  "fields": [
+    { "name": "itemId", "type": "string" },
+    { "name": "itemName", "type": "string" },
+    { "name": "quantity", "type": "int" },
+    { "name": "price", "type": "double" },
+    { "name": "supplierId", "type": "string" },
+    { "name": "timestamp", "type": "long", "logicalType": "timestamp-millis" }
+  ]
+}

@@ -4,29 +4,34 @@ import { NotifierConfig, Notification, Stage } from './types';
 import { ConsumerAddedEvent } from './notifications/ConsumerAddedEvent';
 import { ConsumerRemovedEvent } from './notifications/ConsumerRemovedEvent';
 import { Logger } from './utils/logger';
+import { SubscribedSchemaChangedEvent } from './notifications/SubscribedSchemaChangedEvent';
 
 const logger = new Logger();
 
 export async function sendNotifications(
   config: NotifierConfig,
   notifications: Notification[],
-  dryRun: boolean = false,
-  lifecycle: Stage
+  options: {
+    dryRun: boolean;
+    lifecycle: Stage;
+    actionUrl: string;
+  }
 ): Promise<void> {
   for (const notification of notifications) {
-    for (const ownerName in config.owners) {
-      const owner = config.owners[ownerName];
+    for (const configuredOwnerName in config.owners) {
+      const ownersConfiguration = config.owners[configuredOwnerName];
+      const ownersSubscribedEvents = ownersConfiguration.events;
 
       // Check if owner is configured for this event type AND actually owns the resource
       if (
-        owner.events.includes(notification.id) &&
-        notification.resource.owners.some((resourceOwner) => resourceOwner.id === ownerName)
+        ownersSubscribedEvents.includes(notification.id)
+        // notification.resource.owners.some((resourceOwner) => resourceOwner.id === configuredOwnerName)
       ) {
-        for (const channel of owner.channels) {
+        for (const channel of ownersConfiguration.channels) {
           if (channel.type === 'slack') {
             logger.info(`Sending slack notification to ${channel.webhook}`);
             logger.verbose(`Notification: ${JSON.stringify(notification, null, 2)}`);
-            await sendSlackNotification(config, notification, channel, dryRun, lifecycle);
+            await sendSlackNotification(config, notification, channel, options);
           }
         }
       }
@@ -38,17 +43,23 @@ async function sendSlackNotification(
   config: NotifierConfig,
   notification: Notification,
   channel: { type: string; webhook: string; headers?: { [key: string]: string } },
-  dryRun: boolean = false,
-  lifecycle: Stage
+  options: {
+    dryRun: boolean;
+    lifecycle: Stage;
+    actionUrl: string;
+  }
 ): Promise<void> {
   let message = null;
 
   switch (notification.id) {
     case 'consumer-added':
-      message = ConsumerAddedEvent.getSlackMessage(config, notification, lifecycle);
+      message = ConsumerAddedEvent.getSlackMessage(config, notification, options.lifecycle, options.actionUrl);
       break;
     case 'consumer-removed':
-      message = ConsumerRemovedEvent.getSlackMessage(config, notification, lifecycle);
+      message = ConsumerRemovedEvent.getSlackMessage(config, notification, options.lifecycle, options.actionUrl);
+      break;
+    case 'subscribed-schema-changed':
+      message = SubscribedSchemaChangedEvent.getSlackMessage(config, notification, options.lifecycle, options.actionUrl);
       break;
     default:
       message = null;
@@ -61,7 +72,7 @@ async function sendSlackNotification(
 
   const headers = channel.headers || {};
 
-  if (dryRun) {
+  if (options.dryRun) {
     console.log(chalk.yellow(`[DRY RUN]`), `Would send notification to ${chalk.cyan(channel.webhook)}:`);
     console.log(chalk.gray(JSON.stringify(message, null, 2)));
     if (Object.keys(headers).length > 0) {

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.example.fake;
+
+// Message to represent a user
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  UserRole role = 4;
+  repeated string tags = 5;
+}
