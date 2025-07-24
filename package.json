@@ -28,6 +28,7 @@
   "author": "EventCatalog",
   "license": "MIT",
   "dependencies": {
+    "@clack/prompts": "^0.11.0",
     "@eventcatalog/sdk": "^2.6.8",
     "axios": "^1.6.2",
     "chalk": "^5.4.1",
@@ -35,7 +36,8 @@
     "diff": "^8.0.2",
     "dotenv": "^17.2.0",
     "gray-matter": "^4.0.3",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "picocolors": "^1.1.1"
   },
   "publishConfig": {
     "access": "public"
