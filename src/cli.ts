@@ -39,44 +39,58 @@ program
     const logger = new Logger(options.verbose);
 
     try {
+      // Enhanced CLI intro
+      logger.intro('EventCatalog Notifier');
+
       logger.verbose('Starting EventCatalog Notifier...');
       logger.verbose(`Options: ${JSON.stringify(options, null, 2)}`);
 
       const catalogPath = path.resolve(options.catalog);
       logger.verbose(`Resolved catalog path: ${catalogPath}`);
 
+      // Validation
+      logger.info('Validating EventCatalog directory...');
+
       // Check the directory actually exists
       if (!fs.existsSync(catalogPath)) {
-        logger.error(`EventCatalog directory does not exist: ${catalogPath}`);
+        logger.error(`EventCatalog directory does not exist: ${catalogPath}`, 1);
         process.exit(1);
       }
 
       if (!fs.existsSync(path.join(catalogPath, 'eventcatalog.config.js'))) {
-        logger.error(`EventCatalog configuration file not found: ${path.join(catalogPath, 'eventcatalog.config.js')}`);
-        logger.warn("Make sure you're pointing to a valid EventCatalog directory");
+        logger.error(`EventCatalog configuration file not found`, 1);
+        logger.warn("Make sure you're pointing to a valid EventCatalog directory", 1);
         process.exit(1);
       }
 
-      logger.verbose('Loading notifier configuration...');
+      logger.success('EventCatalog directory validated', 1);
+
+      // Load configuration
+      logger.step('Loading configuration', 1, 4);
+      logger.verbose('Loading notifier configuration...', 1);
       const projectNotifierConfig = loadConfig(path.join(catalogPath, options.config));
-      logger.verbose(`Configuration loaded`);
+      logger.success('Configuration loaded', 1);
 
       const commitRange = options.commitRange || 'HEAD~1..HEAD';
-      logger.info(`Analyzing changes in commit range: ${chalk.cyan(commitRange)}`);
+      logger.step(`Analyzing Git changes (${chalk.cyan(commitRange)})`, 2, 4);
 
       // Get all the changed files
-      logger.verbose('Getting changed files from Git...');
+      logger.info('Retrieving changed files from Git...', 1);
       const changedFiles = getChangedFiles(catalogPath, commitRange);
-      logger.verbose(`Found ${changedFiles.length} changed files`);
+      logger.verbose(`Found ${changedFiles.length} changed files`, 2);
 
       if (changedFiles.length === 0) {
-        logger.info('No files changed in the specified commit range');
-        logger.success('Nothing to process');
+        logger.info('No files changed in the specified commit range', 1);
+        logger.outro('Nothing to process');
         return;
       }
 
-      logger.info(`Processing ${changedFiles.length} changed file(s)...`);
-      logger.verbose(`Changed files: ${JSON.stringify(changedFiles, null, 2)}`);
+      logger.success(`Found ${changedFiles.length} changed file(s)`, 1);
+      logger.verbose(`Changed files: ${JSON.stringify(changedFiles, null, 2)}`, 2);
+
+      // Process events with progress
+      logger.step('Processing events and generating notifications', 3, 4);
+      logger.info('Processing event changes...', 1);
 
       // Add new events here, if you want to process them
       const configuredEvents = [
@@ -87,28 +101,32 @@ program
 
       // Here we process ALL notifications we can
       const notifications = await processEvents(configuredEvents);
+      logger.success(`Generated ${notifications.length} raw notifications`, 1);
 
-      logger.verbose(`Generated ${notifications.length} raw notifications`);
+      logger.verbose(`Generated ${notifications.length} raw notifications`, 2);
+      logger.verbose(`Notifications: ${JSON.stringify(notifications, null, 2)}`, 2);
 
-      // Log the notifications
-      logger.verbose(`Notifications: ${JSON.stringify(notifications, null, 2)}`);
-
-      // Filter out the notifications only send ones that the user is interested in
+      // Filter notifications
+      logger.info('Filtering notifications...', 1);
       const filteredEvents = filterNotifications(projectNotifierConfig, notifications);
-      logger.info(`Found ${filteredEvents.length} notification(s) to send after filtering`);
+      logger.success(`Found ${filteredEvents.length} notification(s) after filtering`, 1);
 
       // Log the filtered events
-      logger.verbose(`Filtered events: ${JSON.stringify(filteredEvents, null, 2)}`);
+      logger.verbose(`Filtered events: ${JSON.stringify(filteredEvents, null, 2)}`, 2);
 
       if (filteredEvents.length === 0) {
-        logger.info('No notifications match your configuration');
-        logger.success('Nothing to send');
+        logger.info('No notifications match your configuration', 1);
+        logger.outro('Nothing to send');
         return;
       }
 
       if (options.dryRun) {
-        logger.warn('DRY RUN MODE - No notifications will be sent');
+        logger.box('Dry Run Mode', 'No notifications will be sent - this is a preview only');
       }
+
+      // Send notifications
+      logger.step('Sending notifications', 4, 4);
+      logger.info(`${options.dryRun ? 'Previewing' : 'Sending'} notifications...`, 1);
 
       await sendNotifications(projectNotifierConfig, filteredEvents, {
         dryRun: options.dryRun ?? false,
@@ -117,7 +135,17 @@ program
       });
 
       const mode = options.dryRun ? 'previewed' : 'sent';
-      logger.success(`Successfully ${mode} ${filteredEvents.length} notification(s)`);
+      logger.success(`Successfully ${mode} ${filteredEvents.length} notification(s)`, 1);
+
+      // Summary
+      logger.summary('Process Summary', [
+        { label: 'Changed files', value: changedFiles.length, status: 'success' },
+        { label: 'Raw notifications', value: notifications.length, status: 'success' },
+        { label: 'Filtered notifications', value: filteredEvents.length, status: 'success' },
+        { label: 'Action', value: mode, status: 'success' },
+      ]);
+
+      logger.outro(`✨ Process completed successfully!`);
     } catch (error) {
       if (error instanceof GitError) {
         // Handle Git errors with user-friendly messages
@@ -132,6 +160,7 @@ program
           logger.stackTrace(error);
         }
 
+        logger.outro('❌ Process failed');
         process.exit(1);
       }
     }
