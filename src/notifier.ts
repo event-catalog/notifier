@@ -2,6 +2,7 @@ import axios from 'axios';
 import chalk from 'chalk';
 import { NotifierConfig, Notification, Stage } from './types';
 import { ConsumerAddedEvent } from './notifications/ConsumerAddedEvent';
+import { ConsumerRemovedEvent } from './notifications/ConsumerRemovedEvent';
 import { Logger } from './utils/logger';
 
 const logger = new Logger();
@@ -45,6 +46,9 @@ async function sendSlackNotification(
   switch (notification.id) {
     case 'consumer-added':
       message = ConsumerAddedEvent.getSlackMessage(config, notification, lifecycle);
+      break;
+    case 'consumer-removed':
+      message = ConsumerRemovedEvent.getSlackMessage(config, notification, lifecycle);
       break;
     default:
       message = null;

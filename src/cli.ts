@@ -10,6 +10,7 @@ import { Logger } from './utils/logger';
 
 // Events
 import { ConsumerAddedEvent } from './notifications/ConsumerAddedEvent';
+import { ConsumerRemovedEvent } from './notifications/ConsumerRemovedEvent';
 
 import { filterNotifications } from './filter';
 import { processEvents } from './processor';
@@ -74,6 +75,7 @@ program
       const events = await processEvents([
         // Process each event type
         new ConsumerAddedEvent({ catalogPath, changedFiles, commitRange }),
+        new ConsumerRemovedEvent({ catalogPath, changedFiles, commitRange }),
       ]);
 
       logger.verbose(`Generated ${events.length} raw notifications`);

@@ -45,7 +45,7 @@ owners:
   payments-team:
     events:
       - consumer-added # Get notified when services consume payment events
-      - consumer-removed # Get notified when services stop consuming events
+      - consumer-removed # Get notified when services stop consuming payment events
     channels:
       - type: slack
         webhook: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
@@ -55,6 +55,7 @@ owners:
   platform-team:
     events:
       - consumer-added
+      - consumer-removed
     channels:
       - type: slack
         webhook: https://hooks.slack.com/services/T00000000/B00000001/YYYYYYYYYYYYYYYYYYYYYYYY
@@ -76,10 +77,10 @@ owners:
 
 The notifier currently supports the following event types:
 
-| Event ID           | Description                                | When It Triggers                                                       |
-| ------------------ | ------------------------------------------ | ---------------------------------------------------------------------- |
-| `consumer-added`   | **New Event Consumer**                     | When a service starts consuming an event (adds to `receives` list)     |
-| `consumer-removed` | **Event Consumer Removed** _(Coming Soon)_ | When a service stops consuming an event (removes from `receives` list) |
+| Event ID           | Description                | When It Triggers                                                       |
+| ------------------ | -------------------------- | ---------------------------------------------------------------------- |
+| `consumer-added`   | **New Event Consumer**     | When a service starts consuming an event (adds to `receives` list)     |
+| `consumer-removed` | **Event Consumer Removed** | When a service stops consuming an event (removes from `receives` list) |
 
 ### Event Details
 
@@ -89,6 +90,13 @@ The notifier currently supports the following event types:
 - **Notification includes**: Event details, new consumer service, event owners, consumer team, impact description
 - **Use case**: Keep event owners informed when new services start depending on their events
 - **Slack message**: Rich formatted message with EventCatalog links and emoji indicators
+
+#### `consumer-removed`
+
+- **Triggers when**: A service removes an event from its `receives` array
+- **Notification includes**: Event details, service that removed consumption, event owners, service team, impact assessment
+- **Use case**: Keep event owners informed when services stop depending on their events (potential breaking changes)
+- **Slack message**: Warning-style message with EventCatalog links and removal indicators
 
 _More event types coming soon! We're working on support for schema changes, ownership changes, deprecations, and more._
 
