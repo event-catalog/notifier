@@ -1,5 +1,11 @@
 # @eventcatalog/notifier
 
+## 0.0.7
+
+### Patch Changes
+
+- 5b8b4b9: feat(cli): added new event for when a consumer is removed
+
 ## 0.0.6
 
 ### Patch Changes
