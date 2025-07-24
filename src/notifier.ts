@@ -14,8 +14,10 @@ export async function sendNotifications(
       const owner = config.owners[ownerName];
 
       // Check if owner is configured for this event type AND actually owns the resource
-      if (owner.events.includes(notification.id) && 
-          notification.resource.owners.some(resourceOwner => resourceOwner.id === ownerName)) {
+      if (
+        owner.events.includes(notification.id) &&
+        notification.resource.owners.some((resourceOwner) => resourceOwner.id === ownerName)
+      ) {
         for (const channel of owner.channels) {
           if (channel.type === 'slack') {
             await sendSlackNotification(config, notification, channel, dryRun, lifecycle);
