@@ -78,9 +78,15 @@ program
 
       logger.verbose(`Generated ${events.length} raw notifications`);
 
+      // Log the notifications
+      logger.verbose(`Notifications: ${JSON.stringify(events, null, 2)}`);
+
       // Use the config to filter out the events, the user is interested in
       const filteredEvents = filterNotifications(config, events);
       logger.info(`Found ${filteredEvents.length} notification(s) to send after filtering`);
+
+      // Log the filtered events
+      logger.verbose(`Filtered events: ${JSON.stringify(filteredEvents, null, 2)}`);
 
       if (filteredEvents.length === 0) {
         logger.info('No notifications match your configuration');
