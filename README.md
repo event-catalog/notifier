@@ -302,4 +302,4 @@ Questions about licensing? We're here to help! Reach out through our support cha
 
 ---
 
-Made with ❤️ by the EventCatalog team.
+Made with ❤️ by the EventCatalog team
